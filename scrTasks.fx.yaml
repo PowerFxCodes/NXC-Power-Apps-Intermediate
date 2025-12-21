@@ -7,7 +7,7 @@ scrTasks As screen:
             ClearCollect(colAllTasks, 'Work tracker') // Reloads data if empty - err handling
         );
         Set(
-            varAvgCompletedTaskDuration,
+            vAvgCompletedTaskDuration,
             Round(
                 Average(
                     Filter(colAllTasks, Progress.Value = "Completed"),
@@ -62,14 +62,6 @@ scrTasks As screen:
         X: =969
         Y: =144
         ZIndex: =2
-
-    Rectangle1 As rectangle:
-        BorderColor: =App.Theme.Colors.Darker40
-        Fill: =Color.WhiteSmoke
-        Width: =731
-        X: =578
-        Y: =586
-        ZIndex: =3
 
     "galAllTasks As gallery.'BrowseLayout_Vertical_ThreeTextVariant_ver5.0'":
         BorderColor: =App.Theme.Colors.Darker10
@@ -647,39 +639,10 @@ scrTasks As screen:
         Y: =612
         ZIndex: =21
 
-    ButtonCanvas1_1 As Button:
-        BasePaletteColor: =
-        BorderColor: =
-        DisplayMode: =DisplayMode.Edit
-        FontColor: =
-        Height: =47
-        OnSelect: |
-            =// Patch one record or multiple
-            
-            If(CountRows(colSelectedItems)=0, //No checkbox checked - single record
-            Patch(colAllTasks,LookUp(colAllTasks,ID=galAllTasks.Selected.ID), { Progress: { Value: "Completed" }}),
-            
-            ForAll( //multiple records
-               colSelectedItems ,
-                Patch(
-                    'Work tracker',
-                    ThisRecord,
-                    { Progress: { Value: "Completed" }
-                     }
-                )
-            ));
-            
-            Clear(colSelectedItems) //Clear collection 
-        Text: ="Mark selected as completed"
-        Width: =145
-        X: =728
-        Y: =612
-        ZIndex: =22
-
     ButtonCanvas2 As Button:
         BasePaletteColor: =
         BorderColor: =
-        DisplayMode: =DisplayMode.Edit
+        DisplayMode: =If(galAllTasks.Selected.Progress.Value="Completed"||IsBlank(cmbUsers.Selected),DisplayMode.Disabled,DisplayMode.Edit)
         FontColor: =
         Height: =47
         OnSelect: |-
@@ -747,9 +710,9 @@ scrTasks As screen:
             Reset(cmbEditPriority);
             Reset(cmbEditProgress);
             Reset(cmbUsers)
-        Text: ="Update SharePoint"
+        Text: ="Update task"
         Width: =112
-        X: =889
+        X: =731
         Y: =612
         ZIndex: =23
 
@@ -825,6 +788,19 @@ scrTasks As screen:
         Y: =706
         ZIndex: =30
 
+    "txtTaskname As 'Text input'":
+        BasePaletteColor: =
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =32
+        Value: =If(varAddRecord,"",galAllTasks.Selected.Title)
+        Width: =320
+        X: =969
+        Y: =92
+        ZIndex: =33
+
     ButtonCanvas2_1 As Button:
         AcceptsFocus: =true
         AccessibleLabel: =""
@@ -892,25 +868,47 @@ scrTasks As screen:
                 UpdateContext({varAddRecord: false})
             )
         TabIndex: =0
-        Text: ="New task"
+        Text: ="Add task"
         Tooltip: =""
         VerticalAlign: =""
         Visible: =true
         Width: =112
-        X: =1019
+        X: =866
         Y: =612
-        ZIndex: =32
+        ZIndex: =34
 
-    "txtTaskname As 'Text input'":
+    ButtonCanvas6_1 As Button:
+        AcceptsFocus: =true
+        AccessibleLabel: =""
+        Align: =""
+        Appearance: ="Primary"
         BasePaletteColor: =
         BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
         DisplayMode: =DisplayMode.Edit
-        Fill: =
+        Font: =""
         FontColor: =
-        Height: =32
-        Value: =If(varAddRecord,"",galAllTasks.Selected.Title)
-        Width: =320
-        X: =969
-        Y: =92
-        ZIndex: =33
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Height: =47
+        Icon: =""
+        IconRotation: =0
+        IconStyle: ="Outline"
+        Layout: ="Icon before"
+        OnSelect: |-
+            =RemoveIf('Work tracker',ID=galAllTasks.Selected.ID);
+            ClearCollect(colAllTasks,'Work tracker')
+        TabIndex: =0
+        Text: ="Remove task"
+        Tooltip: =""
+        VerticalAlign: =""
+        Visible: =true
+        Width: =112
+        X: =1001
+        Y: =612
+        ZIndex: =35
 
