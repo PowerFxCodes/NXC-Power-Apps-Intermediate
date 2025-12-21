@@ -1,0 +1,916 @@
+scrTasks As screen:
+    BackgroundImage: =
+    Fill: =Color.White
+    LoadingSpinnerColor: =App.Theme.Colors.Primary
+    OnVisible: |
+        =If(IsEmpty(colAllTasks), 
+            ClearCollect(colAllTasks, 'Work tracker') // Reloads data if empty - err handling
+        );
+        Set(
+            varAvgCompletedTaskDuration,
+            Round(
+                Average(
+                    Filter(colAllTasks, Progress.Value = "Completed"),
+                    DateDiff('Start date', 'Due date', TimeUnit.Days)
+                ),
+                2
+            )
+        )
+        ;
+        With(
+            { 
+                _startDate: Today(), 
+                _endDate: DateAdd(Today(), 7, TimeUnit.Days) 
+            },
+            Set(varUpcomingTasksCount,
+            CountRows(
+                Filter(
+                    colAllTasks,
+                    'Due date' >= _startDate && 'Due date' <= _endDate
+                )
+            )
+        )
+        )
+
+    cmbEditPriority As Combobox.pcfdataset:
+        AccessibleLabel: =""
+        Appearance: ="FilledDarker"
+        BorderStyle: =""
+        ContentLanguage: =""
+        DefaultSelectedItems: =//galAllTasks.Selected.Priority
+        DisplayMode: =DisplayMode.Edit
+        Font: =""
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Height: =32
+        InputTextPlaceholder: ="Set task priority"
+        IsSearchable: =true
+        Items: =colPriority
+        MultiValueDelimiter: =", "
+        OnChange: =false
+        Required: =false
+        SelectMultiple: =false
+        TabIndex: =0
+        Tooltip: =""
+        TriggerOutput: ="Keypress"
+        ValidationState: ="None"
+        Visible: =!varAddRecord
+        Width: =320
+        X: =969
+        Y: =144
+        ZIndex: =2
+
+    Rectangle1 As rectangle:
+        BorderColor: =App.Theme.Colors.Darker40
+        Fill: =Color.WhiteSmoke
+        Width: =731
+        X: =578
+        Y: =586
+        ZIndex: =3
+
+    "galAllTasks As gallery.'BrowseLayout_Vertical_ThreeTextVariant_ver5.0'":
+        BorderColor: =App.Theme.Colors.Darker10
+        DelayItemLoading: =true
+        Height: =App.Height*.80
+        Items: |
+            =   Filter(
+                colAllTasks,
+              If(IsBlank(cmbPriority.Selected),true, 
+               Priority.Value in cmbPriority.SelectedItems))
+        Layout: =Layout.Vertical
+        LoadingSpinner: =LoadingSpinner.Data
+        ShowScrollbar: =false
+        TemplateFill: =If(ThisItem.IsSelected||chkSelectTask.Checked,App.Theme.Colors.Lighter80,Color.White)
+        TemplatePadding: =0
+        TemplateSize: =Parent.Height/5
+        Width: =400
+        X: =160
+        Y: =83
+        ZIndex: =4
+
+        Title2 As label:
+            Color: =RGBA(50, 49, 48, 1)
+            DisabledColor: =RGBA(166, 166, 166, 1)
+            Font: =App.Theme.Font
+            FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+            Height: =Self.Size * 1.8
+            OnSelect: =Select(Parent)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            Size: =16
+            Text: =ThisItem.Title
+            VerticalAlign: =VerticalAlign.Top
+            Width: =Parent.TemplateWidth - 86
+            X: =16
+            Y: =18
+            ZIndex: =1
+
+        Subtitle2 As label:
+            Color: =RGBA(0, 0, 0, 1)
+            DisabledColor: =RGBA(166, 166, 166, 1)
+            Font: =App.Theme.Font
+            FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+            Height: =Self.Size * 1.8
+            OnSelect: =Select(Parent)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            Size: =12
+            Text: =ThisItem.Progress.Value
+            VerticalAlign: =VerticalAlign.Top
+            Width: =Title2.Width
+            X: =Title2.X
+            Y: =50
+            ZIndex: =2
+
+        Body1 As label:
+            Color: =RGBA(0, 0, 0, 1)
+            DisabledColor: =RGBA(166, 166, 166, 1)
+            Font: =App.Theme.Font
+            FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+            Height: =Self.Size * 1.8
+            OnSelect: =Select(Parent)
+            PaddingBottom: =0
+            PaddingLeft: =0
+            PaddingRight: =0
+            PaddingTop: =0
+            Size: =12
+            Text: =ThisItem.'Due date'
+            VerticalAlign: =VerticalAlign.Top
+            Width: =Title2.Width
+            X: =Title2.X
+            Y: =79
+            ZIndex: =3
+
+        Separator2 As rectangle:
+            BorderColor: =App.Theme.Colors.Darker40
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =8
+            OnSelect: =Select(Parent)
+            Width: =Parent.TemplateWidth
+            Y: =Parent.TemplateHeight - Self.Height
+            ZIndex: =5
+
+        Rectangle2 As rectangle:
+            BorderColor: =App.Theme.Colors.Darker40
+            Fill: =App.Theme.Colors.Darker30
+            Height: =Parent.TemplateHeight - Separator2.Height
+            OnSelect: =Select(Parent)
+            Visible: =ThisItem.IsSelected
+            Width: =4
+            ZIndex: =6
+
+        BadgeCanvas1 As Badge:
+            Appearance: ='BadgeCanvas.Appearance'.Filled
+            BasePaletteColor: =
+            Content: =ThisItem.Priority.Value
+            DisplayMode: =DisplayMode.Edit
+            FontColor: =
+            Height: =32
+            ThemeColor: |-
+                =Switch(
+                    ThisItem.Priority.Value,
+                    "Low","Informative",
+                    "Medium","Brand",
+                    "High","Warning",
+                    "Critical","Severe"
+                )
+            Width: =75
+            X: =208
+            Y: =69
+            ZIndex: =7
+
+        TextCanvas1 As Text:
+            BorderColor: =
+            DisplayMode: =DisplayMode.Edit
+            Fill: =
+            FontColor: =
+            Height: =24
+            Text: |-
+                ="ID: "&ThisItem.ID
+            Width: =124
+            X: =16
+            Y: =100
+            ZIndex: =8
+
+        chkSelectTask As Checkbox:
+            BasePaletteColor: =
+            DisplayMode: =DisplayMode.Edit
+            FontColor: =
+            Height: =26
+            Label: =
+            OnCheck: |-
+                =Collect(
+                    colSelectedItems,
+                    ThisItem
+                )
+            OnSelect: =Select(Parent)
+            OnUncheck: =RemoveIf(colSelectedItems, ID = ThisItem.ID)
+            Width: =30
+            X: =350
+            Y: =67
+            ZIndex: =9
+
+        TextCanvas5 As Text:
+            BorderColor: =
+            DisplayMode: =DisplayMode.Edit
+            Fill: =RGBA(0, 0, 0, 0.02)
+            FontColor: =
+            Height: =21
+            Size: =14
+            Text: |
+                =Concat(ThisItem.Category, Value, ", ") // Joins all the 'Value' entries from the 'Category' column into a single comma-separated string.
+            Width: =238
+            X: =16
+            Y: =124
+            ZIndex: =10
+
+    cmbEditProgress As Combobox.pcfdataset:
+        AccessibleLabel: =""
+        Appearance: ="FilledDarker"
+        BorderStyle: =""
+        ContentLanguage: =""
+        DefaultSelectedItems: =//galAllTasks.Selected.Progress
+        DisplayMode: =DisplayMode.Edit
+        Font: =""
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Height: =32
+        InputTextPlaceholder: ="Set task progress"
+        IsSearchable: =true
+        Items: =colProgress
+        MultiValueDelimiter: =", "
+        OnChange: =false
+        Required: =false
+        SelectMultiple: =false
+        TabIndex: =0
+        Tooltip: =""
+        TriggerOutput: ="Keypress"
+        ValidationState: ="None"
+        Visible: =!varAddRecord
+        Width: =320
+        X: =969
+        Y: =195
+        ZIndex: =5
+
+    cmbUsers As Combobox.pcfdataset:
+        AccessibleLabel: =""
+        Appearance: ="FilledDarker"
+        BorderStyle: =""
+        ContentLanguage: =""
+        DisplayMode: =DisplayMode.Edit
+        Font: =""
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Height: =32
+        InputTextPlaceholder: ="Select members"
+        IsSearchable: =true
+        Items: |
+            =  
+             With(
+                {
+             _varStart: 41 ,
+            _varEnd: 50 }, 
+            
+             
+             Filter(
+                Office365Users.SearchUserV2({searchTerm: "member"}).value,
+                Lower(Mail) in ForAll(
+                        Sequence(_varEnd - _varStart + 1, _varStart, 1),
+            
+                    "member" & Text(Value) & "@nexacu.com.au"
+                )
+            )
+             )
+        MultiValueDelimiter: =", "
+        OnChange: =false
+        Required: =false
+        SelectMultiple: =true
+        TabIndex: =0
+        Tooltip: =""
+        TriggerOutput: ="Keypress"
+        ValidationState: ="None"
+        Visible: =!varAddRecord
+        Width: =320
+        X: =969
+        Y: =250
+        ZIndex: =6
+
+        Mail1 As PowerApps_CoreControls_ComboboxCanvasTemplate_dataField.textualColumn:
+            FieldDisplayName: ="Mail"
+            FieldName: ="Mail"
+            FieldType: ="s"
+            Order: =1
+            Type: ="s"
+            ZIndex: =1
+
+        DisplayName1 As PowerApps_CoreControls_ComboboxCanvasTemplate_dataField.textualColumn:
+            FieldDisplayName: ="DisplayName"
+            FieldName: ="DisplayName"
+            FieldType: ="s"
+            Order: =2
+            Type: ="s"
+            ZIndex: =2
+
+    lblStartDate As Text:
+        Align: ="Start"
+        AutoHeight: =false
+        BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        Font: =""
+        FontColor: =RGBA(106, 122, 127, 1)
+        FontItalic: =false
+        FontStrikethrough: =false
+        FontUnderline: =false
+        Height: =32
+        Size: =14
+        TabIndex: =0
+        Text: ="Start date"
+        Tooltip: =""
+        VerticalAlign: =""
+        Visible: =!varAddRecord
+        Weight: ="Regular"
+        Width: =96
+        Wrap: =true
+        X: =984
+        Y: =299
+        ZIndex: =7
+
+    "dpkStartDate As 'Date picker'":
+        AccessibleLabel: =""
+        Appearance: ="FilledDarker"
+        BasePaletteColor: =
+        BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
+        DateTimeZone: ="Local"
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        Font: =""
+        FontColor: =
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Format: ="Long Abbreviated"
+        Height: =32
+        IsEditable: =false
+        OnChange: =false
+        Placeholder: ="Select a date..."
+        Required: =false
+        SelectedDate: =galAllTasks.Selected.'Start date'
+        StartOfWeek: ="Sunday"
+        TabIndex: =0
+        Tooltip: =""
+        ValidationState: ="None"
+        Visible: =!varAddRecord
+        Width: =320
+        X: =974
+        Y: =323
+        ZIndex: =8
+
+    cmbPriority As Combobox.pcfdataset:
+        BorderColor: =RGBA(214, 221, 224, 1)
+        BorderStyle: =BorderStyle.Solid
+        BorderThickness: =1
+        DisplayMode: =DisplayMode.Edit
+        Height: =32
+        Items: =colPriority
+        SelectMultiple: =true
+        Width: =320
+        X: =207
+        Y: =30
+        ZIndex: =9
+
+    lblDueDate As Text:
+        Align: ="Start"
+        AutoHeight: =false
+        BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        Font: =""
+        FontColor: =RGBA(106, 122, 127, 1)
+        FontItalic: =false
+        FontStrikethrough: =false
+        FontUnderline: =false
+        Height: =32
+        Size: =14
+        TabIndex: =0
+        Text: ="Due date"
+        Tooltip: =""
+        VerticalAlign: =""
+        Visible: =!varAddRecord
+        Weight: ="Regular"
+        Width: =96
+        Wrap: =true
+        X: =981
+        Y: =364
+        ZIndex: =10
+
+    "dpkDueDate As 'Date picker'":
+        AccessibleLabel: =""
+        Appearance: ="FilledDarker"
+        BasePaletteColor: =
+        BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
+        DateTimeZone: ="Local"
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        Font: =""
+        FontColor: =
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Format: ="Long Abbreviated"
+        Height: =32
+        IsEditable: =false
+        OnChange: =false
+        Placeholder: ="Select a date..."
+        Required: =false
+        SelectedDate: =galAllTasks.Selected.'Due date'
+        StartDate: =dpkStartDate.SelectedDate
+        StartOfWeek: ="Sunday"
+        TabIndex: =0
+        Tooltip: =""
+        ValidationState: ="None"
+        Visible: =!varAddRecord
+        Width: =320
+        X: =974
+        Y: =389
+        ZIndex: =11
+
+    TextCanvas6 As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =32
+        Text: |-
+            ="Critical tasks: "&CountCritical
+        Visible: =varDisplayStats
+        Width: =160
+        X: =707
+        Y: =714
+        ZIndex: =12
+
+    lblNotes As Text:
+        Align: ="Start"
+        AutoHeight: =false
+        BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        Font: =""
+        FontColor: =RGBA(106, 122, 127, 1)
+        FontItalic: =false
+        FontStrikethrough: =false
+        FontUnderline: =false
+        Height: =32
+        Size: =14
+        TabIndex: =0
+        Text: ="Notes"
+        Tooltip: =""
+        VerticalAlign: =""
+        Visible: =true
+        Weight: ="Regular"
+        Width: =96
+        Wrap: =true
+        X: =981
+        Y: =442
+        ZIndex: =13
+
+    TextCanvas6_1 As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =32
+        Text: |-
+            ="All tasks: "&CountTasks
+        Visible: =varDisplayStats
+        Width: =96
+        X: =580
+        Y: =714
+        ZIndex: =14
+
+    "txtNotes As 'Text input'":
+        AccessibleLabel: =""
+        Align: =""
+        Appearance: ="FilledDarker"
+        BasePaletteColor: =
+        BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        Font: =""
+        FontColor: =
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Height: =124
+        MaxLength: =-1
+        Mode: ='TextInputCanvas.Mode'.Multiline
+        OnChange: =false
+        Placeholder: =""
+        Required: =false
+        TabIndex: =0
+        Tooltip: =""
+        TriggerOutput: ="FocusOut"
+        Type: ="Text"
+        ValidationState: ="None"
+        Value: =If(varAddRecord,"",  galAllTasks.Selected.Notes)
+        Visible: =true
+        Width: =338
+        X: =974
+        Y: =461
+        ZIndex: =15
+
+    TextCanvas6_2 As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =32
+        Text: |-
+            ="Count Unassigned tasks: "&UnassignedTasksCount
+        Visible: =varDisplayStats
+        Width: =251
+        X: =833
+        Y: =714
+        ZIndex: =16
+
+    TextCanvas7 As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =32
+        Text: |-
+            ="Completion rate: "&CompletionRate&"%"
+        Visible: =varDisplayStats
+        Width: =153
+        X: =1019
+        Y: =714
+        ZIndex: =17
+
+    tglDisplayStats As Toggle:
+        BasePaletteColor: =
+        Checked: =
+        DisplayMode: =DisplayMode.Edit
+        FontColor: =
+        Height: =23
+        Label: ="Show stats"
+        OnCheck: |-
+            =UpdateContext({varDisplayStats:true})
+        OnUncheck: |-
+            =UpdateContext({varDisplayStats:false})
+        Width: =161
+        X: =1199
+        Y: =710
+        ZIndex: =18
+
+    TextCanvas7_1 As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =30
+        Text: |-
+            ="Avg completed task duration: "&vAvgCompletedTaskDuration&" days"
+        Visible: =varDisplayStats
+        Width: =336
+        X: =580
+        Y: =733
+        ZIndex: =19
+
+    TextCanvas9 As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =37
+        Text: |-
+            ="Count upcoming tasks: "& varUpcomingTasksCount&
+                " / " & CountTasks
+        Visible: =varDisplayStats
+        Width: =231
+        X: =134
+        Y: =714
+        ZIndex: =20
+
+    ButtonCanvas1 As Button:
+        BasePaletteColor: =
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        FontColor: =
+        Height: =47
+        OnSelect: |
+            =Patch(
+                colAllTasks, // Collection name
+                LookUp(colAllTasks, ID = galAllTasks.Selected.ID), // Find matching record
+                {
+                    'Start date':dpkStartDate.SelectedDate, // Update Start Date
+                    'Due date': dpkDueDate.SelectedDate, // Update Due Date
+                    Priority: { Value: cmbEditPriority.Selected.Value }, // Choice field update
+                    Progress: { Value: cmbEditProgress.Selected.Value }, // Choice field update
+                    Notes: txtNotes.Value // Update Notes
+                }
+            )
+        Text: ="Update collection"
+        Width: =112
+        X: =600
+        Y: =612
+        ZIndex: =21
+
+    ButtonCanvas1_1 As Button:
+        BasePaletteColor: =
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        FontColor: =
+        Height: =47
+        OnSelect: |
+            =// Patch one record or multiple
+            
+            If(CountRows(colSelectedItems)=0, //No checkbox checked - single record
+            Patch(colAllTasks,LookUp(colAllTasks,ID=galAllTasks.Selected.ID), { Progress: { Value: "Completed" }}),
+            
+            ForAll( //multiple records
+               colSelectedItems ,
+                Patch(
+                    'Work tracker',
+                    ThisRecord,
+                    { Progress: { Value: "Completed" }
+                     }
+                )
+            ));
+            
+            Clear(colSelectedItems) //Clear collection 
+        Text: ="Mark selected as completed"
+        Width: =145
+        X: =728
+        Y: =612
+        ZIndex: =22
+
+    ButtonCanvas2 As Button:
+        BasePaletteColor: =
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        FontColor: =
+        Height: =47
+        OnSelect: |-
+            =Set(
+                varAssignees,
+                ForAll(
+                    cmbUsers.SelectedItems,
+                    {
+                        '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                        Claims: "i:0#.f|membership|" & ThisRecord.Mail,
+                        DisplayName: "",
+                        Email: ThisRecord.Mail,
+                        Department: "",
+                        JobTitle: "",
+                        Picture: ""
+                    }
+                )
+            );
+            If(
+                CountRows(colSelectedItems) = 0,//Checkboxes are not checked
+                Patch(
+                    'Work tracker',
+                    LookUp(
+                        'Work tracker',
+                        ID = galAllTasks.Selected.ID
+                    ),// Find matching task
+                    {
+                        'Start date': dpkStartDate.SelectedDate,
+                        'Due date': dpkDueDate.SelectedDate,
+                        Priority: {Value: cmbEditPriority.Selected.Value},
+                        Progress: {Value: cmbEditProgress.Selected.Value},
+                        Notes: txtNotes.Value,
+                        'Assigned to': varAssignees
+                    }
+                ),
+                ForAll(
+                    colSelectedItems,
+                    Patch(
+                        'Work tracker',
+                        ThisRecord,// Find matching IDs based on checked checkboxes
+                        {
+                            'Start date': dpkStartDate.SelectedDate,
+                            'Due date': dpkDueDate.SelectedDate,
+                            Priority: {Value: cmbEditPriority.Selected.Value},
+                            Progress: {Value: cmbEditProgress.Selected.Value},
+                            Notes: txtNotes.Value,
+                            'Assigned to': varAssignees
+                        }
+                    )
+                )
+            );
+             With(
+                        { _updatedCount: Max(CountRows(colSelectedItems), 1) },
+                        Notify(_updatedCount & " task(s) updated", NotificationType.Success)
+                    )
+            
+            ;
+            Clear(colSelectedItems)//Clear collection records
+            ;
+            ClearCollect(
+                colAllTasks,
+                'Work tracker' //Sync collection after updating SharePoint
+            )
+            ;
+            Reset(cmbEditPriority);
+            Reset(cmbEditProgress);
+            Reset(cmbUsers)
+        Text: ="Update SharePoint"
+        Width: =112
+        X: =889
+        Y: =612
+        ZIndex: =23
+
+    lblDescription As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =74
+        Text: =PlainText(galAllTasks.Selected.Description) //Multi-line text field - The PlainText function removes HTML tags
+        Width: =303
+        X: =617
+        Y: =98
+        ZIndex: =24
+
+    lblAssignees As Text:
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =RGBA(0, 0, 0, 0.02)
+        FontColor: =
+        Height: =79
+        Size: =14
+        Text: |
+            ="Assigned users: " & Coalesce(
+                Concat(galAllTasks.Selected.'Assigned to', Email, ", "),
+                "---"
+            )
+        Width: =321
+        X: =617
+        Y: =215
+        ZIndex: =25
+
+    TextCanvas10 As Text:
+        Align: ='TextCanvas.Align'.Center
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        FontUnderline: =true
+        Height: =26
+        Size: =18
+        Text: ="More details"
+        Weight: ='TextCanvas.Weight'.Semibold
+        Width: =132
+        X: =695
+        Y: =30
+        ZIndex: =27
+
+    TextCanvas10_1 As Text:
+        Align: ='TextCanvas.Align'.Center
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        FontUnderline: =true
+        Height: =26
+        Size: =18
+        Text: ="Edit task"
+        Weight: ='TextCanvas.Weight'.Semibold
+        Width: =132
+        X: =1074
+        Y: =30
+        ZIndex: =28
+
+    rectSeparator As rectangle:
+        BorderColor: =App.Theme.Colors.Darker40
+        Fill: =RGBA(106, 122, 127, 1)
+        Height: =1
+        Visible: =varDisplayStats
+        Width: |
+            =App.Width-80
+        X: =20
+        Y: =706
+        ZIndex: =30
+
+    ButtonCanvas2_1 As Button:
+        AcceptsFocus: =true
+        AccessibleLabel: =""
+        Align: =""
+        Appearance: ="Primary"
+        BasePaletteColor: =
+        BorderColor: =
+        BorderStyle: =""
+        ContentLanguage: =""
+        DisplayMode: =DisplayMode.Edit
+        Font: =""
+        FontColor: =
+        FontItalic: =false
+        FontSize: =0
+        FontStrikethrough: =false
+        FontUnderline: =false
+        FontWeight: =""
+        Height: =47
+        Icon: =""
+        IconRotation: =0
+        IconStyle: ="Outline"
+        Layout: ="Icon before"
+        OnSelect: |-
+            =UpdateContext({varAddRecord: true});
+            // 1) Validate all required fields FIRST
+            If(
+                Or(
+                    IsBlank(txtTaskname.Value),
+                    IsBlank(txtNotes.Value)
+                ),
+                Notify(
+                    "Please fill all required fields.",
+                    NotificationType.Information
+                ),
+                Patch(
+                    'Work tracker',
+                    Defaults('Work tracker'),// add new record
+                    {
+                        Title: Trim(txtTaskname.Value),
+                        'Start date': Today(),
+                        'Due date': Today() + 1,
+                        // For SharePoint Choice columns:
+                        // If your list columns are Choice type, use {Value: ...}
+            Priority: {Value: "Medium"},
+                        Progress: {Value: "Not started"},
+                        Notes: txtNotes.Value
+                    }
+                );
+                With(
+                    {
+                        _updatedCount: Max(
+                            CountRows(colSelectedItems),
+                            1
+                        )
+                    },
+                    Notify(
+                        _updatedCount & " task(s) updated",
+                        NotificationType.Success
+                    )
+                );
+                ClearCollect(
+                    colAllTasks,
+                    'Work tracker'
+                );
+                UpdateContext({varAddRecord: false})
+            )
+        TabIndex: =0
+        Text: ="New task"
+        Tooltip: =""
+        VerticalAlign: =""
+        Visible: =true
+        Width: =112
+        X: =1019
+        Y: =612
+        ZIndex: =32
+
+    "txtTaskname As 'Text input'":
+        BasePaletteColor: =
+        BorderColor: =
+        DisplayMode: =DisplayMode.Edit
+        Fill: =
+        FontColor: =
+        Height: =32
+        Value: =If(varAddRecord,"",galAllTasks.Selected.Title)
+        Width: =320
+        X: =969
+        Y: =92
+        ZIndex: =33
+
