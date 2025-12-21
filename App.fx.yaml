@@ -1,12 +1,12 @@
 App As appinfo:
     BackEnabled: =true
     Formulas: |
-        =CountTasks = CountRows(colAllTasks);
+        CountTasks = CountRows(colAllTasks);
         CountCritical = CountIf(colAllTasks, Priority.Value = "Critical");
         UnassignedTasksCount = CountIf(colAllTasks, IsEmpty('Assigned to'));
         CompletionRate = If(CountRows(colAllTasks)>0,    Round(CountIf(colAllTasks, Progress.Value = "Completed") / CountRows(colAllTasks) * 100, 2)); //err-handling
     OnStart: |-
-        =Concurrent(
+        Concurrent(
             ClearCollect(
                 colAllTasks,
                 'Work tracker'
@@ -31,4 +31,5 @@ App As appinfo:
         OnNew: =false
         OnSave: =false
         OnView: =false
+
 
