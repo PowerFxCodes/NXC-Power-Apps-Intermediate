@@ -875,7 +875,7 @@ scrTasks As screen:
         Y: =612
         ZIndex: =34
 
-    brnRemoveTask As Button:
+    btnRemoveTask As Button:
         AcceptsFocus: =true
         AccessibleLabel: =""
         Align: =""
