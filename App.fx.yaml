@@ -1,12 +1,12 @@
 App As appinfo:
     BackEnabled: =true
     Formulas: |
-        CountTasks = CountRows(colAllTasks);
-        CountCritical = CountIf(colAllTasks, Priority.Value = "Critical");
+        =TasksCount = CountRows(colAllTasks);
+        CriticalTasksCount = CountIf(colAllTasks, Priority.Value = "Critical");
         UnassignedTasksCount = CountIf(colAllTasks, IsEmpty('Assigned to'));
         CompletionRate = If(CountRows(colAllTasks)>0,    Round(CountIf(colAllTasks, Progress.Value = "Completed") / CountRows(colAllTasks) * 100, 2)); //err-handling
     OnStart: |-
-        Concurrent(
+        =Concurrent(
             ClearCollect(
                 colAllTasks,
                 'Work tracker'
@@ -23,3 +23,12 @@ App As appinfo:
             Progress.Value)
             )
         )
+    Theme: =PowerAppsTheme
+
+    Host As hostControl.DefaultHostControlVariant:
+        OnCancel: =false
+        OnEdit: =false
+        OnNew: =false
+        OnSave: =false
+        OnView: =false
+
