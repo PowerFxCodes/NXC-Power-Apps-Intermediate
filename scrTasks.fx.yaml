@@ -647,7 +647,7 @@ scrTasks As screen:
         Height: =47
         OnSelect: |-
             =Set(
-                varAssignedUser ,
+                varAssignedUsers,
                 ForAll(
                     cmbUsers.SelectedItems,
                     {
@@ -675,7 +675,7 @@ scrTasks As screen:
                         Priority: {Value: cmbEditPriority.Selected.Value},
                         Progress: {Value: cmbEditProgress.Selected.Value},
                         Notes: txtNotes.Value,
-                        'Assigned to': varAssignedUser 
+                        'Assigned to': varAssignedUsers 
                     }
                 ),
                 ForAll(
@@ -689,7 +689,7 @@ scrTasks As screen:
                             Priority: {Value: cmbEditPriority.Selected.Value},
                             Progress: {Value: cmbEditProgress.Selected.Value},
                             Notes: txtNotes.Value,
-                            'Assigned to': varAssignedUser 
+                            'Assigned to': varAssignedUsers 
                         }
                     )
                 )
@@ -909,4 +909,5 @@ scrTasks As screen:
         X: =1001
         Y: =612
         ZIndex: =35
+
 
