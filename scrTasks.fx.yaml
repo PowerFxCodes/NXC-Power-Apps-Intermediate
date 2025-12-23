@@ -203,7 +203,7 @@ scrTasks As screen:
                     ThisItem
                 )
             OnSelect: =Select(Parent)
-            OnUncheck: =RemoveIf(colSelectedItems, ID = ThisItem.ID)
+            OnUncheck: =Remove(colSelectedItems,ThisItem)
             Width: =30
             X: =350
             Y: =67
@@ -935,7 +935,7 @@ scrTasks As screen:
             Weight: ='TextCanvas.Weight'.Semibold
             Width: =352
             X: =5
-            Y: =15
+            Y: =6
             ZIndex: =1
 
         btnYes As Button:
