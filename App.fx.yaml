@@ -10,16 +10,14 @@ App As appinfo:
             ClearCollect(
                 colAllTasks,
                 'Work tracker'
-            )
-            ,
+            ),
             ClearCollect(
                 colPriority,
                 Distinct(
                     'Work tracker',
                     Priority.Value
                 )
-            )
-            ,
+            ),
             ClearCollect(colProgress,
             Distinct('Work tracker', 
             Progress.Value)
@@ -33,6 +31,4 @@ App As appinfo:
         OnNew: =false
         OnSave: =false
         OnView: =false
-
-
 

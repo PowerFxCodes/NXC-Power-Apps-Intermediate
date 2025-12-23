@@ -647,7 +647,7 @@ scrTasks As screen:
         Height: =47
         OnSelect: |-
             =Set(
-                varAssignedUsers,
+                varAssignedUsers ,
                 ForAll(
                     cmbUsers.SelectedItems,
                     {
@@ -898,8 +898,7 @@ scrTasks As screen:
         IconStyle: ="Outline"
         Layout: ="Icon before"
         OnSelect: |-
-            =RemoveIf('Work tracker',ID=galAllTasks.Selected.ID);
-            ClearCollect(colAllTasks,'Work tracker')
+            =UpdateContext({varConfirmDeleting:true})
         TabIndex: =0
         Text: ="Remove task"
         Tooltip: =""
@@ -910,4 +909,83 @@ scrTasks As screen:
         Y: =612
         ZIndex: =35
 
+    conPopup As groupContainer.manualLayoutContainer:
+        DropShadow: =DropShadow.Semibold
+        Height: =106
+        RadiusBottomLeft: =4
+        RadiusBottomRight: =4
+        RadiusTopLeft: =4
+        RadiusTopRight: =4
+        Visible: =varConfirmDeleting
+        Width: =369
+        X: =591
+        Y: =355
+        ZIndex: =36
+
+        lblMessage As Text:
+            AutoHeight: =false
+            BorderColor: =
+            DisplayMode: =DisplayMode.Edit
+            Fill: =
+            FontColor: =
+            Height: =80
+            Size: =15
+            Text: ="Are you sure? the ("&galAllTasks.Selected.Title&") task will be deleted!"
+            Visible: =true
+            Weight: ='TextCanvas.Weight'.Semibold
+            Width: =352
+            X: =5
+            Y: =15
+            ZIndex: =1
+
+        btnYes As Button:
+            BasePaletteColor: =
+            BorderColor: =
+            DisplayMode: =DisplayMode.Edit
+            FontColor: =
+            Height: =32
+            OnSelect: |-
+                =Remove('Work tracker',galAllTasks.Selected);
+                ClearCollect(colAllTasks,'Work tracker');
+                UpdateContext({varConfirmDeleting:false});
+                Notify("The record has been deleted successfully!",NotificationType.Warning)
+            Text: ="Yes"
+            Width: =96
+            X: =51
+            Y: =63
+            ZIndex: =2
+
+        btnNo As Button:
+            AcceptsFocus: =true
+            AccessibleLabel: =""
+            Align: =""
+            Appearance: ="Primary"
+            BasePaletteColor: =
+            BorderColor: =
+            BorderStyle: =""
+            ContentLanguage: =""
+            DisplayMode: =DisplayMode.Edit
+            Font: =""
+            FontColor: =
+            FontItalic: =false
+            FontSize: =0
+            FontStrikethrough: =false
+            FontUnderline: =false
+            FontWeight: =""
+            Height: =32
+            Icon: =""
+            IconRotation: =0
+            IconStyle: ="Outline"
+            Layout: ="Icon before"
+            OnSelect: |-
+                =UpdateContext({varConfirmDeleting:false})
+            TabIndex: =0
+            Text: ="No"
+            Tooltip: =""
+            VerticalAlign: =""
+            Visible: =true
+            Width: =96
+            X: =204
+            Y: =63
+            ZIndex: =3
 
