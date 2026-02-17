@@ -847,17 +847,10 @@ scrTasks As screen:
                         Notes: txtNotes.Value
                     }
                 );
-                With(
-                    {
-                        _updatedCount: Max(
-                            CountRows(colSelectedItems),
-                            1
-                        )
-                    },
-                    Notify(
-                        _updatedCount & " task(s) updated",
+                 Notify(
+                        "task created successfully!",
                         NotificationType.Success
-                    )
+                    
                 );
                 ClearCollect(
                     colAllTasks,
@@ -1032,6 +1025,7 @@ scrTasks As screen:
                 X: =204
                 Y: =63
                 ZIndex: =3
+
 
 
 
