@@ -69,7 +69,7 @@ scrTasks As screen:
         Height: =App.Height*.80
         Items: |
             =   Filter(
-                Work tracker,
+                'Work tracker',
               If(IsBlank(cmbPriority.Selected),true, 
                Priority.Value in cmbPriority.SelectedItems))
         Layout: =Layout.Vertical
@@ -1032,5 +1032,6 @@ scrTasks As screen:
                 X: =204
                 Y: =63
                 ZIndex: =3
+
 
 
