@@ -605,22 +605,22 @@ Screens:
     )    
 ;
                With(
-                          { _updatedCount: Max(CountRows(colSelectedItems), 1) },
-                          Notify(_updatedCount & " task(s) updated", NotificationType.Success)
-                      )
+            { _SelectedTaskName: galAllTasks.Selected.Title },
+            Notify(_SelectedTaskName & " task updated", NotificationType.Success)
+        )
 
-              ;
-              Clear(colSelectedItems)//Clear collection records
-              ;
-              ClearCollect(
-                  colAllTasks,
-                  'Work tracker' //Sync collection after updating SharePoint
-              )
-              ;
-              Reset(cmbEditPriority);
-              Reset(cmbEditProgress);
-              Reset(cmbUsers);
+;
+Clear(colSelectedItems)//Clear collection records
+;
+ClearCollect(
+    colAllTasks,
+    'Work tracker' //Sync collection after updating SharePoint
+)
+;
 
+Reset(cmbEditPriority);
+Reset(cmbEditProgress);
+Reset(cmbUsers);
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =12
