@@ -10,7 +10,8 @@ Screens:
   scrTasks:
     Properties:
       OnVisible: |-
-        =If(
+        =
+        If(
             IsEmpty(colAllTasks),
             ClearCollect(
                 colAllTasks,
