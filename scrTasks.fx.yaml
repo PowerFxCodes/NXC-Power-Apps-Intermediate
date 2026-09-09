@@ -750,7 +750,8 @@ Reset(cmbUsers);
             FontWeight: =""
             Height: =47
             OnSelect: |-
-              =UpdateContext({varAddRecord: true});
+              =
+              UpdateContext({varAddRecord: true});
               //Validate all required fields FIRST
               If(
                   Or(
