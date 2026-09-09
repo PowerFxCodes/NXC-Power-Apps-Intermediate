@@ -697,7 +697,8 @@ Screens:
           Properties:
             Height: =47
             OnSelect: |-
-              =If(
+              =
+              If(
                   Confirm(
                       "Are you sure? the "& galAllTasks.Selected.Title &" task will be deleted!",
                       {Title: "Delete Confirmation"}
