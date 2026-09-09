@@ -10,8 +10,7 @@ Screens:
   scrTasks:
     Properties:
       OnVisible: |-
-        =
-        If(
+        =If(
             IsEmpty(colAllTasks),
             ClearCollect(
                 colAllTasks,
@@ -264,7 +263,7 @@ Screens:
             Default: =If(varAddRecord,"",galAllTasks.Selected.Title)
             FontWeight: =""
             MaxLength: =-1
-            Placeholder: =""
+            Placeholder: ="Set task name"
             Size: =0
             TriggerOutput: =TriggerOutput.FocusOut
             X: =969
@@ -363,12 +362,6 @@ Screens:
             Visible: =!varAddRecord
             X: =974
             Y: =389
-      - Icon2:
-          Control: Classic/Icon@2.5.0
-          Properties:
-            Icon: =Icon.ArrowLeft
-            X: =978
-            Y: =669
       - lblCriticalTasks:
           Control: ModernText@1.0.0
           Properties:
@@ -537,8 +530,7 @@ Screens:
             FontWeight: =""
             Height: =47
             OnSelect: |+
-              =
-              Patch(
+              =Patch(
                   colAllTasks, // Collection name
                   LookUp(colAllTasks, ID = galAllTasks.Selected.ID), // Find matching record
                   {
@@ -571,8 +563,7 @@ Screens:
             FontWeight: =""
             Height: =47
             OnSelect: |+
-              =
-              Set(
+              =Set(
                   varAssignedUsers ,
                   ForAll(
                       cmbUsers.SelectedItems,
@@ -587,40 +578,42 @@ Screens:
                       }
                   )
               );
-             Patch(
-        'Work tracker',
-        LookUp(
-            'Work tracker',
-            ID = galAllTasks.Selected.ID
-        ),// Find matching task
-        {
-             Title: Trim(txtTaskname.Text),
-            'Start date': dpkStartDate.SelectedDate,
-            'Due date': dpkDueDate.SelectedDate,
-            Priority: {Value: cmbEditPriority.Selected.Value},
-            Progress: {Value: cmbEditProgress.Selected.Value},
-            Notes: txtNotes.Text,
-            'Assigned to': varAssignedUsers 
-        }
-    )    
-;
+
+                  Patch(
+                      'Work tracker',
+                      LookUp(
+                          'Work tracker',
+                          ID = galAllTasks.Selected.ID
+                      ),// Find matching task
+                      {
+                           Title: Trim(txtTaskname.Text),
+                          'Start date': dpkStartDate.SelectedDate,
+                          'Due date': dpkDueDate.SelectedDate,
+                          Priority: {Value: cmbEditPriority.Selected.Value},
+                          Progress: {Value: cmbEditProgress.Selected.Value},
+                          Notes: txtNotes.Text,
+                          'Assigned to': varAssignedUsers 
+                      }
+                  )    
+              ;
                With(
-            { _SelectedTaskName: galAllTasks.Selected.Title },
-            Notify(_SelectedTaskName & " task updated", NotificationType.Success)
-        )
+                          { _SelectedTaskName: galAllTasks.Selected.Title },
+                          Notify(_SelectedTaskName & " task updated", NotificationType.Success)
+                      )
 
-;
-Clear(colSelectedItems)//Clear collection records
-;
-ClearCollect(
-    colAllTasks,
-    'Work tracker' //Sync collection after updating SharePoint
-)
-;
+              ;
+              Clear(colSelectedItems)//Clear collection records
+              ;
+              ClearCollect(
+                  colAllTasks,
+                  'Work tracker' //Sync collection after updating SharePoint
+              )
+              ;
 
-Reset(cmbEditPriority);
-Reset(cmbEditProgress);
-Reset(cmbUsers);
+              Reset(cmbEditPriority);
+              Reset(cmbEditProgress);
+              Reset(cmbUsers);
+
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =12
@@ -699,7 +692,7 @@ Reset(cmbUsers);
             Width: =132
             X: =1074
             Y: =30
-      - Button2:
+      - btnRemoveTask:
           Control: ModernButton@1.0.0
           Properties:
             Height: =47
@@ -723,16 +716,10 @@ Reset(cmbUsers);
                   NotificationType.Warning
               )
               )
-            Text: ="Delete - new confirm function"
-            Width: =140
-            X: =1050
+            Text: ="Remove task"
+            Width: =122
+            X: =1019
             Y: =612
-      - Icon1:
-          Control: Classic/Icon@2.5.0
-          Properties:
-            Icon: =Icon.ArrowRight
-            X: =802
-            Y: =669
       - rectSeparator:
           Control: Rectangle@2.3.0
           Properties:
@@ -750,8 +737,7 @@ Reset(cmbUsers);
             FontWeight: =""
             Height: =47
             OnSelect: |-
-              =
-              UpdateContext({varAddRecord: true});
+              =UpdateContext({varAddRecord: true});
               //Validate all required fields FIRST
               If(
                   Or(
@@ -794,6 +780,7 @@ Reset(cmbUsers);
             RadiusTopRight: =4
             Text: ="Add task"
             VerticalAlign: =VerticalAlign.Middle
+            Visible: =!varAddRecord
             Width: =112
             X: =866
             Y: =612
@@ -808,15 +795,7 @@ Reset(cmbUsers);
             Visible: =varAddRecord
             Width: =108
             X: =870
-            Y: =675
-      - Text1:
-          Control: ModernText@1.0.0
-          Properties:
-            Height: =30
-            Text: ="Hidden button to cancel adding a record (optional)"
-            Width: =301
-            X: =1042
-            Y: =681
+            Y: =616
       - lblUpcomingTasksCount_1:
           Control: ModernText@1.0.0
           Properties:
