@@ -542,6 +542,7 @@ Screens:
                   colAllTasks, // Collection name
                   LookUp(colAllTasks, ID = galAllTasks.Selected.ID), // Find matching record
                   {
+                      Title:txtTaskname.Text, //Update Task Name
                       'Start date':dpkStartDate.SelectedDate, // Update Start Date
                       'Due date': dpkDueDate.SelectedDate, // Update Due Date
                       Priority: { Value: cmbEditPriority.Selected.Value }, // Choice field update
