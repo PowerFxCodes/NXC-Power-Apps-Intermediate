@@ -587,39 +587,23 @@ Screens:
                       }
                   )
               );
-              If(
-                  CountRows(colSelectedItems) = 0,//Checkboxes are not checked
-                  Patch(
-                      'Work tracker',
-                      LookUp(
-                          'Work tracker',
-                          ID = galAllTasks.Selected.ID
-                      ),// Find matching task
-                      {
-                           Title: Trim(txtTaskname.Text),
-                          'Start date': dpkStartDate.SelectedDate,
-                          'Due date': dpkDueDate.SelectedDate,
-                          Priority: {Value: cmbEditPriority.Selected.Value},
-                          Progress: {Value: cmbEditProgress.Selected.Value},
-                          Notes: txtNotes.Text,
-                          'Assigned to': varAssignedUsers 
-                      }
-                  ),
-                  ForAll(
-                      colSelectedItems,
-                      Patch(
-                          'Work tracker',
-                          ThisRecord,// Find matching IDs based on checked checkboxes
-                          {
-                              'Start date': dpkStartDate.SelectedDate,
-                              'Due date': dpkDueDate.SelectedDate,
-                              Priority: {Value: cmbEditPriority.Selected.Value},
-                              Progress: {Value: cmbEditProgress.Selected.Value},
-                              'Assigned to': varAssignedUsers 
-                          }
-                      )
-                  )
-              );
+             Patch(
+        'Work tracker',
+        LookUp(
+            'Work tracker',
+            ID = galAllTasks.Selected.ID
+        ),// Find matching task
+        {
+             Title: Trim(txtTaskname.Text),
+            'Start date': dpkStartDate.SelectedDate,
+            'Due date': dpkDueDate.SelectedDate,
+            Priority: {Value: cmbEditPriority.Selected.Value},
+            Progress: {Value: cmbEditProgress.Selected.Value},
+            Notes: txtNotes.Text,
+            'Assigned to': varAssignedUsers 
+        }
+    )    
+;
                With(
                           { _updatedCount: Max(CountRows(colSelectedItems), 1) },
                           Notify(_updatedCount & " task(s) updated", NotificationType.Success)
