@@ -570,7 +570,8 @@ Screens:
             FontWeight: =""
             Height: =47
             OnSelect: |+
-              =Set(
+              =
+              Set(
                   varAssignedUsers ,
                   ForAll(
                       cmbUsers.SelectedItems,
