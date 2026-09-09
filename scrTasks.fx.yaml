@@ -537,7 +537,8 @@ Screens:
             FontWeight: =""
             Height: =47
             OnSelect: |+
-              =Patch(
+              =
+              Patch(
                   colAllTasks, // Collection name
                   LookUp(colAllTasks, ID = galAllTasks.Selected.ID), // Find matching record
                   {
