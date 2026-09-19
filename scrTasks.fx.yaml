@@ -10,7 +10,8 @@ Screens:
   scrTasks:
     Properties:
       OnVisible: |-
-        =If(
+        =
+        If(
             IsEmpty(colAllTasks),
             ClearCollect(
                 colAllTasks,
@@ -61,7 +62,8 @@ Screens:
             BorderColor: =App.Theme.Colors.Darker10
             Height: =App.Height*.80
             Items: |+
-              =   Filter(
+              =   
+              Filter(
                   colAllTasks,
                 If(IsBlank(cmbPriority.Selected),true, 
                  Priority.Value in cmbPriority.SelectedItems))
@@ -148,7 +150,8 @@ Screens:
                   Appearance: ='BadgeCanvas.Appearance'.Filled
                   Content: =ThisItem.Priority.Value
                   ThemeColor: |-
-                    =Switch(
+                    =
+                    Switch(
                         ThisItem.Priority.Value,
                         "Low","Informative",
                         "Medium","Brand",
@@ -213,7 +216,8 @@ Screens:
                   RadiusTopRight: =0
                   Size: =14
                   Text: |+
-                    =Concat(ThisItem.Category, Value, ", ") // Joins all the 'Value' entries from the 'Category' column into a single comma-separated string.
+                    =
+                    Concat(ThisItem.Category, Value, ", ") // Joins all the 'Value' entries from the 'Category' column into a single comma-separated string.
                   VerticalAlign: =VerticalAlign.Top
                   Width: =238
                   X: =16
@@ -530,7 +534,8 @@ Screens:
             FontWeight: =""
             Height: =47
             OnSelect: |+
-              =Patch(
+              =
+              Patch(
                   colAllTasks, // Collection name
                   LookUp(colAllTasks, ID = galAllTasks.Selected.ID), // Find matching record
                   {
@@ -559,11 +564,13 @@ Screens:
           Control: ModernButton@1.0.0
           Properties:
             Align: =Align.Center
-            DisplayMode: =If(galAllTasks.Selected.Progress.Value="Completed"||IsBlank(cmbUsers.Selected),DisplayMode.Disabled,DisplayMode.Edit)
+            DisplayMode: =
+            If(galAllTasks.Selected.Progress.Value="Completed"||IsBlank(cmbUsers.Selected),DisplayMode.Disabled,DisplayMode.Edit)
             FontWeight: =""
             Height: =47
             OnSelect: |+
-              =Set(
+              =
+              Set(
                   varAssignedUsers ,
                   ForAll(
                       cmbUsers.SelectedItems,
@@ -602,8 +609,7 @@ Screens:
                       )
 
               ;
-              Clear(colSelectedItems)//Clear collection records
-              ;
+              
               ClearCollect(
                   colAllTasks,
                   'Work tracker' //Sync collection after updating SharePoint
@@ -739,7 +745,8 @@ Screens:
             FontWeight: =""
             Height: =47
             OnSelect: |-
-              =UpdateContext({varAddRecord: true});
+              =
+              UpdateContext({varAddRecord: true});
               //Validate all required fields FIRST
               If(
                   Or(
