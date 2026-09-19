@@ -642,7 +642,8 @@ Screens:
             RadiusTopRight: =0
             Size: =14
             Text: |
-              ="Assigned users: " & Coalesce(
+              =
+              "Assigned users: " & Coalesce(
                   Concat(galAllTasks.Selected.'Assigned to', Email, ", "),
                   "---"
               )
